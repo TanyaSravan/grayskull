@@ -3,6 +3,7 @@ package com.flipkart.grayskull.spi.repositories;
 import com.flipkart.grayskull.spi.models.AuditEntry;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Generic data access interface for AuditEntry entities.
@@ -28,7 +29,7 @@ public interface AuditEntryRepository {
 
     /**
      * Finds audit entries by optional filters with pagination.
-     * All filter parameters are optional (can be null).
+     * All filter parameters are optional.
      * 
      * @param projectId Optional project ID filter
      * @param resourceName Optional resource name filter
@@ -38,11 +39,11 @@ public interface AuditEntryRepository {
      * @param limit Pagination limit
      * @return List of audit entries matching the filters
      */
-    List<AuditEntry> findByFilters(String projectId, String resourceName, String resourceType, String action, int offset, int limit);
+    List<AuditEntry> findByFilters(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action, int offset, int limit);
 
     /**
      * Counts audit entries matching the optional filters.
-     * All filter parameters are optional (can be null).
+     * All filter parameters are optional.
      * 
      * @param projectId Optional project ID filter
      * @param resourceName Optional resource name filter
@@ -50,5 +51,5 @@ public interface AuditEntryRepository {
      * @param action Optional action filter
      * @return Count of audit entries matching the filters
      */
-    long countByFilters(String projectId, String resourceName, String resourceType, String action);
+    long countByFilters(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action);
 }

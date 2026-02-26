@@ -2,6 +2,8 @@ package com.flipkart.grayskull.service.interfaces;
 
 import com.flipkart.grayskull.models.dto.response.AuditEntriesResponse;
 
+import java.util.Optional;
+
 /**
  * Service interface for audit-related operations.
  */
@@ -18,6 +20,6 @@ public interface AuditService {
      * @param limit Pagination limit
      * @return AuditEntriesResponse containing filtered audit entries
      */
-    AuditEntriesResponse getAuditEntries(String projectId, String resourceName, String resourceType, String action, int offset, int limit);
+    AuditEntriesResponse getAuditEntries(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action, int offset, int limit);
 }
 

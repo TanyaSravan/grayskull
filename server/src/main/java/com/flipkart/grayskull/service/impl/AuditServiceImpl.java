@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service implementation for audit operations.
@@ -21,7 +22,7 @@ public class AuditServiceImpl implements AuditService {
     private final AuditEntryRepository auditEntryRepository;
 
     @Override
-    public AuditEntriesResponse getAuditEntries(String projectId, String resourceName, String resourceType, String action, int offset, int limit) {
+    public AuditEntriesResponse getAuditEntries(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action, int offset, int limit) {
         
         List<AuditEntry> entries = auditEntryRepository.findByFilters(projectId, resourceName, resourceType, action, offset, limit);
         long total = auditEntryRepository.countByFilters(projectId, resourceName, resourceType, action);

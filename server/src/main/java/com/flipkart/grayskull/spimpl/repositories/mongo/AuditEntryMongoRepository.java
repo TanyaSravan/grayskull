@@ -4,6 +4,7 @@ import com.flipkart.grayskull.entities.AuditEntryEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * MongoDB repository interface for AuditEntryEntity.
@@ -22,7 +23,7 @@ public interface AuditEntryMongoRepository extends MongoRepository<AuditEntryEnt
      * @param limit Maximum number of records to return
      * @return List of matching audit entry entities
      */
-    List<AuditEntryEntity> findByFilters(String projectId, String resourceName, String resourceType, String action, int offset, int limit);
+    List<AuditEntryEntity> findByFilters(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action, int offset, int limit);
 
     /**
      * Counts audit entries matching the given filters.
@@ -33,6 +34,6 @@ public interface AuditEntryMongoRepository extends MongoRepository<AuditEntryEnt
      * @param action Optional action filter
      * @return Count of matching audit entries
      */
-    long countByFilters(String projectId, String resourceName, String resourceType, String action);
+    long countByFilters(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action);
 }
 

@@ -9,6 +9,7 @@ import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Spring Data MongoDB repository implementation for AuditEntry.
@@ -32,7 +33,7 @@ public class AuditEntryRepositoryImpl implements AuditEntryRepository {
     }
 
     @Override
-    public List<AuditEntry> findByFilters(String projectId, String resourceName, String resourceType, String action, int offset, int limit) {
+    public List<AuditEntry> findByFilters(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action, int offset, int limit) {
 
         return mongoRepository.findByFilters(projectId, resourceName, resourceType, action, offset, limit)
                 .stream()
@@ -41,7 +42,7 @@ public class AuditEntryRepositoryImpl implements AuditEntryRepository {
     }
 
     @Override
-    public long countByFilters(String projectId, String resourceName, String resourceType, String action) {
+    public long countByFilters(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action) {
         return mongoRepository.countByFilters(projectId, resourceName, resourceType, action);
     }
 }

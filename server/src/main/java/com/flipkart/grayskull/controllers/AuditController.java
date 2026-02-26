@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 /**
  * REST controller for audit-related operations.
  * Provides endpoints to query audit entries for projects.
@@ -46,7 +48,7 @@ public class AuditController {
             @RequestParam(name = "offset", defaultValue = "0") @Min(0) int offset,
             @RequestParam(name = "limit", defaultValue = "10") @Min(1) @Max(100) int limit) {
         
-        AuditEntriesResponse response = auditService.getAuditEntries(projectId, resourceName, resourceType, action, offset, limit);
+        AuditEntriesResponse response = auditService.getAuditEntries(Optional.of(projectId), Optional.ofNullable(resourceName), Optional.ofNullable(resourceType), Optional.ofNullable(action), offset, limit);
         
         return ResponseTemplate.success(response, "Successfully retrieved audit entries.");
     }

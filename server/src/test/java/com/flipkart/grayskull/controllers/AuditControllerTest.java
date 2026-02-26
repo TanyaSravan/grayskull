@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -47,8 +48,8 @@ class AuditControllerTest {
             );
             AuditEntriesResponse expectedResponse = new AuditEntriesResponse(entries, 2L);
 
-            when(auditService.getAuditEntries(PROJECT_ID, RESOURCE_NAME, RESOURCE_TYPE, ACTION, 0, 10))
-                    .thenReturn(expectedResponse);
+            when(auditService.getAuditEntries(Optional.of(PROJECT_ID), Optional.of(RESOURCE_NAME), Optional.of(RESOURCE_TYPE), Optional.of(ACTION), 0, 10))
+                     .thenReturn(expectedResponse);
 
             // Act
             ResponseTemplate<AuditEntriesResponse> result = auditController.getProjectAudits(
@@ -61,7 +62,7 @@ class AuditControllerTest {
             assertThat(result.getData().getTotal()).isEqualTo(2L);
             assertThat(result.getMessage()).isEqualTo("Successfully retrieved audit entries.");
 
-            verify(auditService).getAuditEntries(PROJECT_ID, RESOURCE_NAME, RESOURCE_TYPE, ACTION, 0, 10);
+            verify(auditService).getAuditEntries(Optional.of(PROJECT_ID), Optional.of(RESOURCE_NAME), Optional.of(RESOURCE_TYPE), Optional.of(ACTION), 0, 10);
         }
 
         @Test
@@ -75,7 +76,7 @@ class AuditControllerTest {
             );
             AuditEntriesResponse expectedResponse = new AuditEntriesResponse(entries, 3L);
 
-            when(auditService.getAuditEntries(PROJECT_ID, null, null, null, 0, 10))
+            when(auditService.getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 0, 10))
                     .thenReturn(expectedResponse);
 
             // Act
@@ -88,7 +89,7 @@ class AuditControllerTest {
             assertThat(result.getData().getEntries()).hasSize(3);
             assertThat(result.getData().getTotal()).isEqualTo(3L);
 
-            verify(auditService).getAuditEntries(PROJECT_ID, null, null, null, 0, 10);
+            verify(auditService).getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 0, 10);
         }
 
         @Test
@@ -98,7 +99,7 @@ class AuditControllerTest {
             List<AuditEntry> entries = List.of(createAuditEntry("entry1", 1));
             AuditEntriesResponse expectedResponse = new AuditEntriesResponse(entries, 1L);
 
-            when(auditService.getAuditEntries(PROJECT_ID, RESOURCE_NAME, null, ACTION, 0, 10))
+            when(auditService.getAuditEntries(Optional.of(PROJECT_ID), Optional.of(RESOURCE_NAME), Optional.empty(), Optional.of(ACTION), 0, 10))
                     .thenReturn(expectedResponse);
 
             // Act
@@ -110,7 +111,7 @@ class AuditControllerTest {
             assertThat(result.getData()).isEqualTo(expectedResponse);
             assertThat(result.getData().getEntries()).hasSize(1);
 
-            verify(auditService).getAuditEntries(PROJECT_ID, RESOURCE_NAME, null, ACTION, 0, 10);
+            verify(auditService).getAuditEntries(Optional.of(PROJECT_ID), Optional.of(RESOURCE_NAME), Optional.empty(), Optional.of(ACTION), 0, 10);
         }
 
         @Test
@@ -119,7 +120,7 @@ class AuditControllerTest {
             // Arrange
             AuditEntriesResponse expectedResponse = new AuditEntriesResponse(Collections.emptyList(), 0L);
 
-            when(auditService.getAuditEntries(PROJECT_ID, RESOURCE_NAME, RESOURCE_TYPE, ACTION, 0, 10))
+            when(auditService.getAuditEntries(Optional.of(PROJECT_ID), Optional.of(RESOURCE_NAME), Optional.of(RESOURCE_TYPE), Optional.of(ACTION), 0, 10))
                     .thenReturn(expectedResponse);
 
             // Act
@@ -131,7 +132,7 @@ class AuditControllerTest {
             assertThat(result.getData().getEntries()).isEmpty();
             assertThat(result.getData().getTotal()).isZero();
 
-            verify(auditService).getAuditEntries(PROJECT_ID, RESOURCE_NAME, RESOURCE_TYPE, ACTION, 0, 10);
+            verify(auditService).getAuditEntries(Optional.of(PROJECT_ID), Optional.of(RESOURCE_NAME), Optional.of(RESOURCE_TYPE), Optional.of(ACTION), 0, 10);
         }
 
         @Test
@@ -145,7 +146,7 @@ class AuditControllerTest {
             );
             AuditEntriesResponse expectedResponse = new AuditEntriesResponse(entries, 50L);
 
-            when(auditService.getAuditEntries(PROJECT_ID, null, null, null, 5, 3))
+            when(auditService.getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 5, 3))
                     .thenReturn(expectedResponse);
 
             // Act
@@ -157,7 +158,7 @@ class AuditControllerTest {
             assertThat(result.getData().getEntries()).hasSize(3);
             assertThat(result.getData().getTotal()).isEqualTo(50L);
 
-            verify(auditService).getAuditEntries(PROJECT_ID, null, null, null, 5, 3);
+            verify(auditService).getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 5, 3);
         }
 
         @Test
@@ -167,7 +168,7 @@ class AuditControllerTest {
             List<AuditEntry> entries = List.of(createAuditEntry("entry1", 1));
             AuditEntriesResponse expectedResponse = new AuditEntriesResponse(entries, 1L);
 
-            when(auditService.getAuditEntries(PROJECT_ID, null, null, null, 0, 10))
+            when(auditService.getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 0, 10))
                     .thenReturn(expectedResponse);
 
             // Act - Using default offset=0, limit=10
@@ -177,7 +178,7 @@ class AuditControllerTest {
 
             // Assert
             assertThat(result.getData()).isEqualTo(expectedResponse);
-            verify(auditService).getAuditEntries(PROJECT_ID, null, null, null, 0, 10);
+            verify(auditService).getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 0, 10);
         }
 
         @Test
@@ -187,7 +188,7 @@ class AuditControllerTest {
             List<AuditEntry> entries = List.of(createAuditEntry("entry1", 1));
             AuditEntriesResponse expectedResponse = new AuditEntriesResponse(entries, 1L);
 
-            when(auditService.getAuditEntries(PROJECT_ID, null, null, null, 0, 100))
+            when(auditService.getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 0, 100))
                     .thenReturn(expectedResponse);
 
             // Act - Using maximum limit of 100
@@ -197,7 +198,7 @@ class AuditControllerTest {
 
             // Assert
             assertThat(result.getData()).isEqualTo(expectedResponse);
-            verify(auditService).getAuditEntries(PROJECT_ID, null, null, null, 0, 100);
+            verify(auditService).getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 0, 100);
         }
 
         @Test
@@ -206,7 +207,7 @@ class AuditControllerTest {
             // Arrange
             AuditEntriesResponse expectedResponse = new AuditEntriesResponse(Collections.emptyList(), 1000L);
 
-            when(auditService.getAuditEntries(PROJECT_ID, null, null, null, 990, 10))
+            when(auditService.getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 990, 10))
                     .thenReturn(expectedResponse);
 
             // Act
@@ -217,7 +218,7 @@ class AuditControllerTest {
             // Assert
             assertThat(result.getData().getEntries()).isEmpty();
             assertThat(result.getData().getTotal()).isEqualTo(1000L);
-            verify(auditService).getAuditEntries(PROJECT_ID, null, null, null, 990, 10);
+            verify(auditService).getAuditEntries(Optional.of(PROJECT_ID), Optional.empty(), Optional.empty(), Optional.empty(), 990, 10);
         }
     }
 
