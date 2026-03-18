@@ -8,9 +8,9 @@ grayskull:
     keys:
       test-key: "MfDeylVH3ZmvnrK+XJv259fzjFB55+9yZaUr1OYvNVE="
   audit:
-    user-types:
-      service-user-prefix: "service:"
-      human-user-prefix: "user:"
+    service-user-prefix: "service:"
+    human-user-prefix: "user:"
+    max-query-age-days: 180
 
 audit:
   derby-directory: /tmp/derby-test

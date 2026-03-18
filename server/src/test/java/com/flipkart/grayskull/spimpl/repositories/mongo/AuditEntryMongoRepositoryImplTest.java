@@ -1,6 +1,6 @@
 package com.flipkart.grayskull.spimpl.repositories.mongo;
 
-import com.flipkart.grayskull.configuration.UserTypeConfiguration;
+import com.flipkart.grayskull.configuration.AuditQueryConfiguration;
 import com.flipkart.grayskull.entities.AuditEntryEntity;
 import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,14 +27,17 @@ import static org.mockito.Mockito.*;
 class AuditEntryMongoRepositoryImplTest {
 
     private MongoTemplate mongoTemplate;
-    private UserTypeConfiguration userTypeConfig;
+    private AuditQueryConfiguration auditConfig;
     private AuditEntryMongoRepositoryImpl repository;
 
     @BeforeEach
     void setUp() {
         mongoTemplate = mock(MongoTemplate.class);
-        userTypeConfig = new UserTypeConfiguration("service:", "human:");
-        repository = new AuditEntryMongoRepositoryImpl(mongoTemplate, userTypeConfig);
+        auditConfig = new AuditQueryConfiguration();
+        auditConfig.setServiceUserPrefix("service:");
+        auditConfig.setHumanUserPrefix("human:");
+        auditConfig.setMaxQueryAgeDays(180);
+        repository = new AuditEntryMongoRepositoryImpl(mongoTemplate, auditConfig);
     }
 
     @Nested
@@ -440,10 +443,10 @@ class AuditEntryMongoRepositoryImplTest {
         @Test
         @DisplayName("should escape special regex characters in user prefix")
         void shouldEscapeSpecialRegexCharacters_inUserPrefix() {
-            UserTypeConfiguration configWithSpecialChars = new UserTypeConfiguration(
-                    "service:v2.",
-                    "user+prefix*"
-            );
+            AuditQueryConfiguration configWithSpecialChars = new AuditQueryConfiguration();
+            configWithSpecialChars.setServiceUserPrefix("service:v2.");
+            configWithSpecialChars.setHumanUserPrefix("user+prefix*");
+            configWithSpecialChars.setMaxQueryAgeDays(180);
             AuditEntryMongoRepositoryImpl repoWithSpecialChars = 
                     new AuditEntryMongoRepositoryImpl(mongoTemplate, configWithSpecialChars);
             

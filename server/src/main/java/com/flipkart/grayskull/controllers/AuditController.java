@@ -2,6 +2,7 @@ package com.flipkart.grayskull.controllers;
 
 import com.flipkart.grayskull.audit.AuditAction;
 import com.flipkart.grayskull.audit.UserType;
+import com.flipkart.grayskull.configuration.AuditQueryConfiguration;
 import com.flipkart.grayskull.models.dto.response.AuditEntriesResponse;
 import com.flipkart.grayskull.models.dto.response.ResponseTemplate;
 import com.flipkart.grayskull.service.interfaces.AuditService;
@@ -15,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
 
@@ -29,9 +31,12 @@ import java.util.Optional;
 public class AuditController {
 
     private final AuditService auditService;
+    private final AuditQueryConfiguration auditConfig;
 
     /**
      * Retrieves audit entries for a specific project with optional filtering.
+     * Enforces maximum query age limit to prevent expensive queries on old data.
+     * If no timestamp is provided, defaults to the configured maximum age.
      * 
      * @param projectId Project ID from the path
      * @param resourceName Optional resource name to filter audit entries
@@ -56,7 +61,8 @@ public class AuditController {
             @RequestParam(name = "offset", defaultValue = "0") @Min(0) int offset,
             @RequestParam(name = "limit", defaultValue = "10") @Min(1) @Max(100) int limit) {
         
-        AuditEntriesResponse response = auditService.getAuditEntries(Optional.of(projectId), Optional.ofNullable(resourceName), Optional.ofNullable(resourceType), Optional.ofNullable(action), Optional.ofNullable(userType), parseTimestamp(afterTimestamp), offset, limit);
+        Date effectiveTimestamp = getEffectiveTimestamp(parseTimestamp(afterTimestamp));
+        AuditEntriesResponse response = auditService.getAuditEntries(Optional.of(projectId), Optional.ofNullable(resourceName), Optional.ofNullable(resourceType), Optional.ofNullable(action), Optional.ofNullable(userType), Optional.of(effectiveTimestamp), offset, limit);
         
         return ResponseTemplate.success(response, "Successfully retrieved audit entries.");
     }
@@ -92,6 +98,28 @@ public class AuditController {
         AuditEntriesResponse response = auditService.getAuditEntries(Optional.ofNullable(projectId), Optional.ofNullable(resourceName), Optional.ofNullable(resourceType), Optional.ofNullable(action), Optional.ofNullable(userType), parseTimestamp(afterTimestamp), offset, limit);
         
         return ResponseTemplate.success(response, "Successfully retrieved audit entries.");
+    }
+
+    /**
+     * Gets the effective timestamp for audit queries.
+     * Validates user-provided timestamps and defaults to maximum age limit if not provided.
+     * 
+     * @param afterTimestamp Optional user-provided timestamp
+     * @return Effective timestamp to use (either validated user timestamp or default max age)
+     * @throws IllegalArgumentException if user-provided timestamp is older than the allowed limit
+     */
+    private Date getEffectiveTimestamp(Optional<Date> afterTimestamp) {
+        Date minAllowedTimestamp = Date.from(Instant.now().minus(auditConfig.getMaxQueryAgeDays(), ChronoUnit.DAYS));
+        if (afterTimestamp.isEmpty()) {
+            return minAllowedTimestamp;
+        }
+        
+        Date requestedTimestamp = afterTimestamp.get();
+        if (requestedTimestamp.before(minAllowedTimestamp)) {
+            throw new IllegalArgumentException(String.format("Cannot query audit entries older than %d days.", auditConfig.getMaxQueryAgeDays()));
+        }
+        
+        return requestedTimestamp;
     }
 
     /**

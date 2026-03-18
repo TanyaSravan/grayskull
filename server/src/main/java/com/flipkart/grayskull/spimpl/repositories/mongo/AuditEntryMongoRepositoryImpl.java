@@ -1,6 +1,6 @@
 package com.flipkart.grayskull.spimpl.repositories.mongo;
 
-import com.flipkart.grayskull.configuration.UserTypeConfiguration;
+import com.flipkart.grayskull.configuration.AuditQueryConfiguration;
 import com.flipkart.grayskull.entities.AuditEntryEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class AuditEntryMongoRepositoryImpl implements AuditEntryMongoRepositoryCustom {
 
     private final MongoTemplate mongoTemplate;
-    private final UserTypeConfiguration userTypeConfig;
+    private final AuditQueryConfiguration auditConfig;
 
     public List<AuditEntryEntity> findByFilters(Optional<String> projectId, Optional<String> resourceName, Optional<String> resourceType, Optional<String> action, Optional<String> userType, Optional<Date> afterTimestamp, int offset, int limit) {
 
@@ -84,8 +84,8 @@ public class AuditEntryMongoRepositoryImpl implements AuditEntryMongoRepositoryC
      */
     private String getUserTypePrefix(String userType) {
         return switch (userType) {
-            case "SERVICE" -> userTypeConfig.getServiceUserPrefix();
-            case "HUMAN" -> userTypeConfig.getHumanUserPrefix();
+            case "SERVICE" -> auditConfig.getServiceUserPrefix();
+            case "HUMAN" -> auditConfig.getHumanUserPrefix();
             default -> null;
         };
     }
