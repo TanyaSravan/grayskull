@@ -7,6 +7,10 @@ grayskull:
   crypto:
     keys:
       test-key: "MfDeylVH3ZmvnrK+XJv259fzjFB55+9yZaUr1OYvNVE="
+  audit:
+    service-user-prefix: "service:"
+    human-user-prefix: "user:"
+    max-query-age-days: 180
 
 audit:
   derby-directory: /tmp/derby-test

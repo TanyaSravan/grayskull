@@ -150,6 +150,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /**
+     * Handles client input errors such as invalid date formats or illegal argument values.
+     * These exceptions indicate that the client provided malformed or invalid data.
+     *
+     * @param ex      The exception that was thrown.
+     * @param request The current web request.
+     * @return A ResponseEntity containing a standardized error response with a 400 Bad Request status.
+     */
+    @ExceptionHandler({java.time.format.DateTimeParseException.class, IllegalArgumentException.class})
+    public ResponseEntity<ResponseTemplate<Void>> handleClientInputException(Exception ex, WebRequest request) {
+        log.warn("Client input error: {}", ex.getMessage());
+        ResponseTemplate<Void> errorResponse = ResponseTemplate.error(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.name());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    
+
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
             HttpHeaders headers, HttpStatusCode status, WebRequest request) {

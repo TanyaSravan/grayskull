@@ -35,4 +35,18 @@ grayskull:
         project: "test-project"
         actions:
           - "secrets.list"
-          - "secrets.read.metadata" 
+          - "secrets.read.metadata"
+      - user: "service:automated-task"
+        project: "*"
+        actions:
+          - "secrets.create"
+          - "secrets.read.value"
+      - user: "human:john.doe"
+        project: "*"
+        actions:
+          - "secrets.create"
+          - "secrets.read.value"
+  audit:
+    service-user-prefix: "service:"
+    human-user-prefix: "human:"
+    max-query-age-days: 180

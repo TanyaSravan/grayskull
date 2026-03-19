@@ -47,6 +47,10 @@ grayskull:
         actions:
           - "secrets.list"
           - "secrets.read.metadata"
+  audit:
+    service-user-prefix: "service:"
+    human-user-prefix: "user:"
+    max-query-age-days: 180
 
 
 management:
