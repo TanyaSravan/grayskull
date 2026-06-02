@@ -99,7 +99,7 @@ public class SecretController {
                 .actorId(actorName)
                 .ips(requestUtils.getRemoteIPs())
                 .metadata(auditMetadata).build();
-        asyncAuditLogger.log(auditEntry);
+//        asyncAuditLogger.log(auditEntry);
         return ResponseTemplate.success(response, "Successfully read secret value.");
     }
 
