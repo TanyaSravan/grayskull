@@ -6,6 +6,7 @@ import com.flipkart.grayskull.spi.models.enums.LifecycleState;
 import com.flipkart.grayskull.spi.repositories.SecretRepository;
 import com.flipkart.grayskull.spimpl.repositories.mongo.SecretDataMongoRepository;
 import com.flipkart.grayskull.spimpl.repositories.mongo.SecretMongoRepository;
+import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,6 +65,11 @@ public class SecretRepositoryImpl implements SecretRepository {
     }
 
     @Override
+    @Timed(value = "spring.data.repository.invocations", extraTags = {
+            "method", "findActiveByProjectAndNames",
+            "repository", "SecretRepositoryImpl",
+            "state", "SUCCESS"
+    })
     public List<Secret> findActiveByProjectAndNames(Map<String, List<String>> projectToNames) {
         Query query = buildActiveSecretsQuery(projectToNames);
         if (query == null) {
