@@ -71,7 +71,7 @@ public class SecretBatchController {
                     .metadata(metadata)
                     .build();
 
-            asyncAuditLogger.log(auditEntry);
+//            asyncAuditLogger.log(auditEntry);
         }
     }
 }
